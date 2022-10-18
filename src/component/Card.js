@@ -10,6 +10,7 @@ const Card = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // 게시물 삭제 핸들러
   const deleteHandler = useCallback(
     (e) => {
       e.preventDefault();
@@ -19,6 +20,7 @@ const Card = (props) => {
     [dispatch, id]
   );
 
+  // 게시물 수정 핸들러
   const editHandler = useCallback(
     (e) => {
       e.preventDefault();

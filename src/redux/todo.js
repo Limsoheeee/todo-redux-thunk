@@ -34,11 +34,14 @@ export const __delTodo = createAsyncThunk("delTodo", (id, thunkAPI) => {
   thunkAPI.dispatch(delTodo(id));
 });
 
-export const __updateTodo = createAsyncThunk("updateTodo",async (todo, thunkAPI) => {
-  updateTodoApi(todo);
+export const __updateTodo = createAsyncThunk(
+  "updateTodo",
+  async (todo, thunkAPI) => {
+    updateTodoApi(todo);
 
-  thunkAPI.dispatch(updateTodo(todo));
-});
+    thunkAPI.dispatch(updateTodo(todo));
+  }
+);
 
 const initialState = {
   todos: [],

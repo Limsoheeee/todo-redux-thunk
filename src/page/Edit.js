@@ -19,14 +19,17 @@ const Edit = () => {
 
   const [todo, setTodo] = useState(init);
 
+  // 현재 게시물 생성인지 기존 게시물 수정인지 여부를 저장하는 변수
   const isEdit = useMemo(() => (id ? true : false), [id]);
 
+  // 인풋에 모든 정보를 입력했는지에 대한 유효성 검사를 진행하는 커스텀 훅
   const { validation } = useValidation(todo);
 
   const onSubmitHandler = useCallback(
     (e) => {
       e.preventDefault();
 
+      // 게시물 생성인지 수정인지 여부에 따른 다른 디스패치 액션 실행
       if (isEdit) {
         dispatch(__updateTodo(todo));
       } else {
@@ -47,6 +50,9 @@ const Edit = () => {
     [todo]
   );
 
+  // edit일 경우 해당 게시물에 원래 데이터를 가져와서 사용하기 위한 함수
+  // useEffect에 직접 작성하는 것이 아닌 따로 함수를 만든 이유는
+  // useEffect에서는 async await 문법을 사용할 수 없이 때문 입니다.
   const requestUpdate = useCallback(async () => {
     if (isEdit) {
       const todo = await getTodoApi(id);
@@ -55,6 +61,7 @@ const Edit = () => {
     }
   }, [id, isEdit]);
 
+  // 수정 페이지로 진입시 데이터 갱신을 위한 useEffect
   useEffect(() => {
     requestUpdate();
   }, [requestUpdate]);
@@ -70,6 +77,7 @@ const Edit = () => {
             name={"title"}
             value={todo.title}
             onChange={onChangeHandler}
+            required
           />
         </InputWrap>
         <InputWrap>
@@ -79,9 +87,11 @@ const Edit = () => {
             name={"body"}
             value={todo.body}
             onChange={onChangeHandler}
+            required
           />
         </InputWrap>
 
+        {/* useValidation 커스텀 훅에서 진행한 결과에 따라 disabled 설정을 해준다. */}
         <button disabled={!validation} type="submit">
           등록하기
         </button>
