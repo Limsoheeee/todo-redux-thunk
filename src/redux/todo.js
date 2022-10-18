@@ -5,7 +5,23 @@ import {
   delTodoApi,
   updateTodoApi,
   getTodoApi,
+  getNextTodoApi,
 } from "../axios/todoApi";
+
+export const __getNextTodo = createAsyncThunk(
+  "getNextTodo",
+  async (_, thunkAPI) => {
+    const { page } = thunkAPI.getState().todo;
+
+    try {
+      const response = await getNextTodoApi(page);
+
+      return thunkAPI.fulfillWithValue(response);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 
 export const __addTodo = createAsyncThunk("addTodo", (todo, thunkAPI) => {
   addTodoApi(todo);
@@ -45,6 +61,9 @@ export const __updateTodo = createAsyncThunk(
 
 const initialState = {
   todos: [],
+  page: 1,
+  isNext: true,
+  isLoaded: false,
 };
 
 const todo = createSlice({
@@ -64,6 +83,24 @@ const todo = createSlice({
       state.todos = state.todos.map((todo) => {
         return todo.id === action.payload.id ? action.payload : todo;
       });
+    },
+  },
+  extraReducers: {
+    [__getNextTodo.pending]: (state) => {
+      state.isLoaded = true;
+    },
+    [__getNextTodo.fulfilled]: (state, action) => {
+      state.todos.push(...action.payload);
+      state.page += 1;
+
+      if (action.payload < 5) {
+        state.isNext = false;
+      }
+
+      state.isLoaded = false;
+    },
+    [__getNextTodo.rejected]: (_, action) => {
+      console.log(action.payload);
     },
   },
 });

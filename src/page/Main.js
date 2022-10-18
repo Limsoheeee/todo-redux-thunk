@@ -1,20 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Card from "../component/Card";
 import List from "../component/List";
-import { __getTodoList } from "../redux/todo";
+import { __getNextTodo } from "../redux/todo";
 
 const Main = () => {
   const dispatch = useDispatch();
 
-  const todoList = useSelector((state) => state.todo.todos);
+  const { isNext, todos } = useSelector((state) => state.todo);
 
-  // 메인페이지 진입시 서버에서 todoList를 가져와 리덕스를 업데이트 합니다.
+  const target = useRef(null);
+
   useEffect(() => {
-    dispatch(__getTodoList());
-  }, [dispatch]);
+    if (isNext) {
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          dispatch(__getNextTodo());
+        }
+      });
+
+      observer.observe(target.current);
+
+      return () => {
+        observer.disconnect(observer);
+      };
+    }
+  }, [dispatch, isNext]);
 
   return (
     <Container>
@@ -22,9 +35,10 @@ const Main = () => {
       {/* List 컴포넌트는 list를 map으로 단순히 그려주기 위한 컴포넌트 입니다.
           onReder함수를 통해 item, 즉 list의 요소를 받아오고 있고, 그 데이터를 활용해 Card 컴포넌트를 그려주고 있습니다. */}
       <List
-        list={todoList}
+        list={todos}
         onRender={(item) => <Card key={item.id} {...item} />}
       />
+      <div ref={target} style={{ width: "100%", height: "1px" }} />
     </Container>
   );
 };

@@ -27,3 +27,9 @@ export const delTodoApi = (id) => {
 export const updateTodoApi = (todo) => {
   instance.put(`/todos/${todo.id}`, todo);
 };
+
+export const getNextTodoApi = async (page) => {
+  const response = await instance.get(`/todos?_page=${page}&_limit=5`);
+
+  return response.data;
+};

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -6,6 +6,7 @@ import { __delTodo } from "../redux/todo";
 
 const Card = (props) => {
   const { id, title, body } = props;
+  console.log(id);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const Card = (props) => {
     <Container>
       <ToDetail to={`/${id}`}>
         <h2>{title}</h2>
+        <p>{id}</p>
         <p>{body}</p>
         <button onClick={deleteHandler}>삭제</button>
         <button onClick={editHandler}>수정</button>
@@ -42,7 +44,7 @@ const Card = (props) => {
   );
 };
 
-export default Card;
+export default memo(Card);
 
 const Container = styled.li`
   & * {

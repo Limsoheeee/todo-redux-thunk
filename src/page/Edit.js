@@ -17,6 +17,14 @@ const Edit = () => {
 
   const { id } = useParams();
 
+  const [number, setNumber] = useState(0);
+
+  const test = useCallback(() => {
+    setNumber(number + 1);
+  }, [number]);
+
+  console.log(number);
+
   const [todo, setTodo] = useState(init);
 
   // 현재 게시물 생성인지 기존 게시물 수정인지 여부를 저장하는 변수
@@ -69,6 +77,7 @@ const Edit = () => {
   return (
     <>
       <Link to={-1}>뒤로가기</Link>
+      <button onClick={test}>변경</button>
       <Container onSubmit={onSubmitHandler}>
         <InputWrap>
           <label htmlFor={"title"}>제목</label>
